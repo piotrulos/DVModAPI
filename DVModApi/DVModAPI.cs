@@ -2,71 +2,114 @@
 using System;
 using UnityEngine;
 using UnityModManagerNet;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DVModApi
 {
-    public delegate void DVisLoaded(); 
-    public static class DVModAPI
+    public enum FunctionType
     {
-        public static DVAPI_LoadingScreen DVLoadingScreen;
-        private static string DVModAPIVersion = "0.1";
-        static bool Load(UnityModManager.ModEntry modEntry)
-        {
-            Debug.Log("<color=cyan>[DVModAPI] Initializing...</color>");
-            DVLoadingScreen = new DVAPI_LoadingScreen();
-            GameObject init = new GameObject("DVModApi");
-            GameObject.DontDestroyOnLoad(init);
-            WorldStreamingInit.LoadingFinished += WorldStreamingInit_LoadingFinished;
-            DVLoadingScreen.LoadingFinished += DVLoadingScreen_LoadingFinished;
-            Debug.Log($"<color=cyan>[DVModAPI] Loaded (version: {DVModAPIVersion})</color>");
-            return true;
-        }
-
-        private static void DVLoadingScreen_LoadingFinished()
-        {
-            Debug.Log("<color=cyan>[DVModAPI] Game Loaded</color>");
-        }
-
-        private static void WorldStreamingInit_LoadingFinished()
-        {
-            DVLoadingScreen.LoadingScreenFinished();
-        }
-
-               
         /// <summary>
-        /// Load Asset bundle from your mod folder
+        /// OnMenuLoad - Called once when Main Menu has been fully loaded (Happens after UMM's "Load" entry point)
         /// </summary>
-        /// <param name="modEntryPath"></param>
-        /// <param name="bundleName"></param>
-        /// <returns></returns>
-        /// <exception cref="FileNotFoundException"></exception>
-        public static AssetBundle LoadAssetBundle(string modEntryPath, string bundleName)
-        {
-            string bundle = Path.Combine(modEntryPath, bundleName);
-
-            if (File.Exists(bundle))
-            {
-                Debug.Log($"Loading AssetBundle: {bundle}...");
-                return AssetBundle.LoadFromMemory(File.ReadAllBytes(bundle));
-            }
-            else
-            {
-                throw new FileNotFoundException($"Error: File not found: {bundle} {Environment.NewLine}", bundle);
-            }
-        }
+        OnMenuLoad,
+        /// <summary>
+        /// OnGameLoad - Called once when game has been loaded (After Loading Screen)
+        /// </summary>
+        OnGameLoad,
+        /// <summary>
+        /// OnSave - Executed once when game is being saved.
+        /// </summary>
+        OnSave,
+        /// <summary>
+        /// ModSettings - ModAPI Settings should be created here. (Created settings are visible only in "Better Mod UI", this is NOT for UMM settings)
+        /// </summary>
+        ModSettings,
+        /// <summary>
+        /// ModSettingsLoaded - Called after saved settings data have been loaded from file. (ModAPI Settings, this is NOT for UMM settings)
+        /// </summary>
+        ModSettingsLoaded
     }
 
-    public class DVAPI_LoadingScreen
+    internal class DVModEntry
     {
-        public event DVisLoaded LoadingFinished;
-        internal void LoadingScreenFinished()
+        internal UnityModManager.ModEntry modEntry;
+
+        internal Action A_OnMenuLoad;           //Load in main menu
+        internal Action A_OnGameLoad;           //When Game is loaded
+        internal Action A_OnSave;               //When Game is saved
+        internal Action A_ModSettings;          //Settings Creation  
+        internal Action A_ModSettingsLoaded;    //When mod settings have been loaded from file
+
+        internal DVModEntry(UnityModManager.ModEntry m)
         {
-            OnLoadingScreenFinished();
+            modEntry = m;
         }
-        protected virtual void OnLoadingScreenFinished()
+
+        internal void Setup(FunctionType functionType, Action function)
         {
-            LoadingFinished?.Invoke();
+            switch (functionType)
+            {
+                case FunctionType.OnMenuLoad:
+                    if (A_OnMenuLoad == null)
+                        A_OnMenuLoad = function;
+                    else
+                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>OnMenuLoad</color> function type.");
+                    break;
+                case FunctionType.OnGameLoad:
+                    if (A_OnGameLoad == null)
+                        A_OnGameLoad = function;
+                    else
+                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>OnGameLoad</color> function type.");
+                    break;
+                case FunctionType.OnSave:
+                    if (A_OnSave == null)
+                        A_OnSave = function;
+                    else
+                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>OnSave</color>> function type.");
+                    break;
+                case FunctionType.ModSettings:
+                    if (A_ModSettings == null)
+                        A_ModSettings = function;
+                    else
+                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>ModSettings</color> function type.");
+                    break;
+                case FunctionType.ModSettingsLoaded:
+                    if (A_ModSettingsLoaded == null)
+                        A_ModSettingsLoaded = function;
+                    else
+                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>ModSettingsLoaded</color> function type.");
+                    break;
+            }
         }
     }
 
+    public class DVModAPI
+    {
+        internal static List<DVModEntry> DVModEntries = new List<DVModEntry>();
+        internal static GameObject DVModAPIGO;
+
+        /// <summary>
+        /// Setup functions controlled by DVModAPI
+        /// </summary>
+        /// <param name="modEntry">your UMM modEntry</param>
+        /// <param name="functionType">functionType to Setup</param>
+        /// <param name="function">Actual function to execute</param>
+        public static void Setup(UnityModManager.ModEntry modEntry, FunctionType functionType, Action function)
+        {
+            DVModEntry me = DVModEntries.Where(x => x.modEntry == modEntry).FirstOrDefault();   
+            if (me == null)
+            {
+                me = new DVModEntry(modEntry);
+                DVModEntries.Add(me);
+            }
+            me.Setup(functionType, function);
+        }
+
+        internal static void Init()
+        {
+            DVModEntries.Clear();
+        }
+       
+    }
 }
