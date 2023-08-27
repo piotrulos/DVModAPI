@@ -54,31 +54,31 @@ namespace DVModApi
                     if (A_OnMenuLoad == null)
                         A_OnMenuLoad = function;
                     else
-                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>OnMenuLoad</color> function type.");
+                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>OnMenuLoad</color> function type.");
                     break;
                 case FunctionType.OnGameLoad:
                     if (A_OnGameLoad == null)
                         A_OnGameLoad = function;
                     else
-                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>OnGameLoad</color> function type.");
+                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>OnGameLoad</color> function type.");
                     break;
                 case FunctionType.OnSave:
                     if (A_OnSave == null)
                         A_OnSave = function;
                     else
-                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>OnSave</color>> function type.");
+                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>OnSave</color>> function type.");
                     break;
                 case FunctionType.ModSettings:
                     if (A_ModSettings == null)
                         A_ModSettings = function;
                     else
-                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>ModSettings</color> function type.");
+                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>ModSettings</color> function type.");
                     break;
                 case FunctionType.ModSettingsLoaded:
                     if (A_ModSettingsLoaded == null)
                         A_ModSettingsLoaded = function;
                     else
-                        LogHelper.LogError($"Setup() error for <color=cyan>{modEntry.Info.Id}</color>. You already created <color=cyan>ModSettingsLoaded</color> function type.");
+                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>ModSettingsLoaded</color> function type.");
                     break;
             }
         }

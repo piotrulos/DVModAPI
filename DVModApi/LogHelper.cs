@@ -11,7 +11,7 @@ namespace DVModApi
     {
         internal static void Log(string message)
         {
-            UnityModManager.Logger.Log(message, "<color=cyan>[DVModAPI] </color>");
+            UnityModManager.Logger.Log(message, "<color=#00ffffff>[DVModAPI] </color>");
         }
         internal static void LogError(string message)
         {

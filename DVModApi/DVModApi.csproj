@@ -41,6 +41,9 @@
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="DV.Common">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\DV.Common.dll</HintPath>
+    </Reference>
     <Reference Include="DV.UI">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\DV.UI.dll</HintPath>
     </Reference>

@@ -29,7 +29,7 @@ namespace DVModApi
             }
             else
             {
-                throw new FileNotFoundException($"<color=cyan>[DVModAPI]</color> <color=red>LoadAssetBundle() Error:</color> File not found: {bundle} {Environment.NewLine}", bundle);
+                throw new FileNotFoundException($"<color=#00ffffff>[DVModAPI]</color> <color=red>LoadAssetBundle() Error:</color> File not found: {bundle} {Environment.NewLine}", bundle);
             }
         }
 
@@ -45,7 +45,7 @@ namespace DVModApi
 
             if (!File.Exists(fn))
             {
-                throw new FileNotFoundException($"<color=cyan>[DVModAPI]</color> <color=red>LoadTexture() Error:</color> File not found: {fn}{Environment.NewLine}", fn);
+                throw new FileNotFoundException($"<color=#00ffffff>[DVModAPI]</color> <color=red>LoadTexture() Error:</color> File not found: {fn}{Environment.NewLine}", fn);
             }
             string ext = Path.GetExtension(fn).ToLower();
             if (ext == ".png" || ext == ".jpg")
@@ -56,7 +56,7 @@ namespace DVModApi
             }
             else
             {
-                throw new NotSupportedException($"<color=cyan>[DVModAPI]</color> <color=red>LoadTexture() Error:</color> Texture not supported: {fileName}{Environment.NewLine}");
+                throw new NotSupportedException($"<color=#00ffffff>[DVModAPI]</color> <color=red>LoadTexture() Error:</color> Texture not supported: {fileName}{Environment.NewLine}");
             }
         }
     }

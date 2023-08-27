@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System;
+﻿using System;
 using UnityEngine;
 using UnityModManagerNet;
 using UnityEngine.SceneManagement;
@@ -10,7 +9,7 @@ namespace DVModApi
     {
         static bool Load(UnityModManager.ModEntry modEntry)
         {
-            LogHelper.Log("<color=cyan>Initializing...</color>");
+            LogHelper.Log("<color=#00ffffff>Initializing...</color>");
             DVModAPI.Init();
             if (DVModAPI.DVModAPIGO == null)
             {
@@ -19,10 +18,35 @@ namespace DVModApi
                 GameObject.DontDestroyOnLoad(DVModAPI.DVModAPIGO);
                 DVModAPI.DVModAPIGO.AddComponent<DVModAPIManager>();
                 WorldStreamingInit.LoadingFinished += WorldStreamingInit_LoadingFinished;
+                SaveGameManager.AboutToSave += SaveGameManager_AboutToSave;
             }
-            LogHelper.Log($"Loaded (version: <color=cyan>{modEntry.Version}</color>)");
+            LogHelper.Log($"Loaded (version: <color=#00ffffff>{modEntry.Version}</color>)");
             return true;
         }
+
+        private static void SaveGameManager_AboutToSave(DV.Common.SaveType saveType)
+        {
+            LogHelper.Log("Game is getting saved...");
+            LogHelper.Log($"Save type: <color=yellow>{saveType} save</color>");
+            //Call OnSave for registered mods.
+            for (int i = 0; i < DVModAPI.DVModEntries.Count; i++)
+            {
+                if (DVModAPI.DVModEntries[i].A_OnSave != null)
+                {
+                    try
+                    {
+                        LogHelper.Log($"Loading <color=#00ffffff>OnSave</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>");
+                        DVModAPI.DVModEntries[i].A_OnSave.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        LogHelper.LogError($"Failed during Loading <color=#00ffffff>OnSave</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>{Environment.NewLine}DETAILS: {e.Message}");
+                        Debug.LogError(e);
+                    }
+                }
+            }
+        }
+
         private static void WorldStreamingInit_LoadingFinished()
         {
             LogHelper.Log("Game has been loaded");
@@ -33,12 +57,12 @@ namespace DVModApi
                 {
                     try
                     {
-                        LogHelper.Log($"Loading <color=cyan>OnGameLoad</color> for <color=cyan>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>");
+                        LogHelper.Log($"Loading <color=#00ffffff>OnGameLoad</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>");
                         DVModAPI.DVModEntries[i].A_OnGameLoad.Invoke();
                     }
                     catch (Exception e)
                     {
-                        LogHelper.LogError($"Failed during Loading <color=cyan>OnGameLoad</color> for <color=cyan>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>{Environment.NewLine}DETAILS: {e.Message}");
+                        LogHelper.LogError($"Failed during Loading <color=#00ffffff>OnGameLoad</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>{Environment.NewLine}DETAILS: {e.Message}");
                         Debug.LogError(e);
                     }
                 }
@@ -56,12 +80,12 @@ namespace DVModApi
                     {
                         try
                         {
-                            LogHelper.Log($"Loading <color=cyan>OnMenuLoad</color> for <color=cyan>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>");
+                            LogHelper.Log($"Loading <color=#00ffffff>OnMenuLoad</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>");
                             DVModAPI.DVModEntries[i].A_OnMenuLoad.Invoke();
                         }
                         catch (Exception e)
                         {
-                            LogHelper.LogError($"Failed during Loading <color=cyan>OnMenuLoad</color> for <color=cyan>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>{Environment.NewLine}DETAILS: {e.Message}");
+                            LogHelper.LogError($"Failed during Loading <color=#00ffffff>OnMenuLoad</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>{Environment.NewLine}DETAILS: {e.Message}");
                             Debug.LogError(e);
                         }
                     }
