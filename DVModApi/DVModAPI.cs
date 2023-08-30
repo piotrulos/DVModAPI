@@ -80,6 +80,9 @@ namespace DVModApi
                     else
                         LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>ModSettingsLoaded</color> function type.");
                     break;
+                default:
+                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. There is no such function (are you on outdated version of API? Also don't bitwise it)");
+                    break;
             }
         }
     }
