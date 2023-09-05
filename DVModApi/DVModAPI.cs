@@ -41,9 +41,17 @@ namespace DVModApi
         internal Action A_ModSettings;          //Settings Creation  
         internal Action A_ModSettingsLoaded;    //When mod settings have been loaded from file
 
+        internal bool hasModSettings = false;
+        internal List<ModSettings> modSettings; //List of custom Mod Settings
+
         internal DVModEntry(UnityModManager.ModEntry m)
         {
             modEntry = m;
+        }
+        internal void ModSettingsSetup()
+        {
+            hasModSettings = true;
+            modSettings = new List<ModSettings>();
         }
 
         internal void Setup(FunctionType functionType, Action function)
@@ -112,7 +120,6 @@ namespace DVModApi
         internal static void Init()
         {
             DVModEntries.Clear();
-        }
-       
+        }       
     }
 }

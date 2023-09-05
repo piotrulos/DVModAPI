@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DVModAssets.cs" />
+    <Compile Include="DVModSettings.cs" />
     <Compile Include="LogHelper.cs" />
     <Compile Include="UMMEntryPoint.cs" />
     <Compile Include="DVModAPI.cs" />

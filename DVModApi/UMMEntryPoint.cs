@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityModManagerNet;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 namespace DVModApi
 {
@@ -28,9 +29,10 @@ namespace DVModApi
         {
             LogHelper.Log("Game is getting saved...");
             LogHelper.Log($"Save type: <color=yellow>{saveType} save</color>");
-            //Call OnSave for registered mods.
+     
             for (int i = 0; i < DVModAPI.DVModEntries.Count; i++)
             {
+                //Call OnSave for registered mods.
                 if (DVModAPI.DVModEntries[i].A_OnSave != null)
                 {
                     try
@@ -50,9 +52,10 @@ namespace DVModApi
         private static void WorldStreamingInit_LoadingFinished()
         {
             LogHelper.Log("Game has been loaded");
-            //Call OnGameLoad for registered mods.
+
             for (int i = 0; i < DVModAPI.DVModEntries.Count; i++)
             {
+                //Call OnGameLoad for registered mods.
                 if (DVModAPI.DVModEntries[i].A_OnGameLoad != null)
                 {
                     try
@@ -73,9 +76,24 @@ namespace DVModApi
             if (scene.name == "MainMenu_LFS")
             {
                 LogHelper.Log("Main Menu has been fully loaded");
-                //Call OnMenuLoad for registered mods.
                 for (int i = 0; i < DVModAPI.DVModEntries.Count; i++)
                 {
+                    //Call ModSettings for registered mods.
+                    if (DVModAPI.DVModEntries[i].A_ModSettings != null)
+                    {
+                        try
+                        {
+                            DVModSettings.Settings(DVModAPI.DVModEntries[i]);
+                            DVModAPI.DVModEntries[i].A_ModSettings.Invoke();
+                        }
+                        catch (Exception e)
+                        {
+                            LogHelper.LogError($"Failed during Creating <color=#00ffffff>ModSettings</color> for <color=#00ffffff>{DVModAPI.DVModEntries[i].modEntry.Info.Id}</color>{Environment.NewLine}DETAILS: {e.Message}");
+                            Debug.LogError(e);
+                        }
+                    }
+
+                    //Call OnMenuLoad for registered mods.
                     if (DVModAPI.DVModEntries[i].A_OnMenuLoad != null)
                     {
                         try
