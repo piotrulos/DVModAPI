@@ -43,12 +43,15 @@
     </Reference>
     <Reference Include="DV.Common">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\DV.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DV.UI">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\DV.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DV.UIFramework">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\DV.UIFramework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -63,6 +66,7 @@
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
@@ -70,6 +74,7 @@
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityModManager">
       <HintPath>..\..\..\..\..\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\UnityModManager\UnityModManager.dll</HintPath>

@@ -35,7 +35,7 @@ namespace DVModApi
     {
         internal UnityModManager.ModEntry modEntry;
 
-        internal Action A_OnMenuLoad;           //Load in main menu
+        internal Action<bool> A_OnMenuLoad;     //Load in main menu
         internal Action A_OnGameLoad;           //When Game is loaded
         internal Action A_OnSave;               //When Game is saved
         internal Action A_ModSettings;          //Settings Creation  
@@ -53,17 +53,26 @@ namespace DVModApi
             hasModSettings = true;
             modSettings = new List<ModSettings>();
         }
-
-        internal void Setup(FunctionType functionType, Action function)
+        internal void SetupBoolFunction(FunctionType functionType, Action<bool> function)
+        {
+            if (functionType == FunctionType.OnMenuLoad)
+                if (A_OnMenuLoad == null)
+                    A_OnMenuLoad = function;
+                else
+                    LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>OnMenuLoad</color> function type.");
+            else
+            {
+                LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. Invalid action for {functionType}.");
+                throw new Exception($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. Invalid action for {functionType}.");
+            }
+        }
+        internal void SetupFunction(FunctionType functionType, Action function)
         {
             switch (functionType)
             {
                 case FunctionType.OnMenuLoad:
-                    if (A_OnMenuLoad == null)
-                        A_OnMenuLoad = function;
-                    else
-                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>OnMenuLoad</color> function type.");
-                    break;
+                    LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. <color=#00ffffff>OnMenuLoad</color> must be Action<bool>.");
+                    throw new Exception($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. <color=#00ffffff>OnMenuLoad</color> must be Action<bool>.");
                 case FunctionType.OnGameLoad:
                     if (A_OnGameLoad == null)
                         A_OnGameLoad = function;
@@ -114,7 +123,17 @@ namespace DVModApi
                 me = new DVModEntry(modEntry);
                 DVModEntries.Add(me);
             }
-            me.Setup(functionType, function);
+            me.SetupFunction(functionType, function);
+        }
+        public static void Setup(UnityModManager.ModEntry modEntry, FunctionType functionType, Action<bool> function)
+        {
+            DVModEntry me = DVModEntries.Where(x => x.modEntry == modEntry).FirstOrDefault();
+            if (me == null)
+            {
+                me = new DVModEntry(modEntry);
+                DVModEntries.Add(me);
+            }
+            me.SetupBoolFunction(functionType, function);
         }
 
         internal static void Init()

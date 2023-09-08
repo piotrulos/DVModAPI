@@ -1,15 +1,9 @@
-﻿using DV.UI;
-using DV.UIFramework;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DVModApi
 {
     internal class DVModAPIManager : MonoBehaviour
     {
-    /*    private PopupManager popupManager;
-        public void Start()
-        {
-            this.FindPopupManager(ref popupManager);            
-        }*/
+        //for future use, currently it's just indicator of "Return to main menu"
     }
 }
