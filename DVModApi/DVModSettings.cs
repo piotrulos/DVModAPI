@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using static UnityModManagerNet.UnityModManager.ModEntry;
 using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
-using System.Net.Security;
 
 namespace DVModApi
 {
-    public class SettingsList
+    internal class SettingsList
     {
         public List<Setting> settings = new List<Setting>();
     }
-    public class Setting
+    internal class Setting
     {
         public string ID;
         public object Value;
@@ -32,6 +30,9 @@ namespace DVModApi
         Text,
         Selector,
     }
+    /// <summary>
+    /// Class for adding custom Mod Settings
+    /// </summary>
     public class DVModSettings
     {
         static DVModEntry mod = null;
@@ -48,7 +49,7 @@ namespace DVModApi
             if (!Directory.Exists(Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings")))
                 Directory.CreateDirectory(Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings"));
             string path = Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings", $"{mod.modEntry.Info.Id}.json");
-            
+            LogHelper.Log($"Saving Mod Settings for <color=#00ffffff>{mod.modEntry.Info.Id}</color> to file...");
             for (int i = 0; i < mod.modSettings.Count; i++)
             {
                 switch (mod.modSettings[i].Type)
@@ -81,6 +82,7 @@ namespace DVModApi
             string path = Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings", $"{mod.modEntry.Info.Id}.json");
             if (!File.Exists(path)) return;
             SettingsList s = JsonConvert.DeserializeObject<SettingsList>(File.ReadAllText(path));
+            LogHelper.Log($"Loading saved Mod Settings for <color=#00ffffff>{mod.modEntry.Info.Id}</color> from file...");
             for (int i = 0; i < s.settings.Count; i++)
             {
                 ModSettings ms = mod.modSettings.Where(x => x.ID == s.settings[i].ID).FirstOrDefault();
@@ -129,7 +131,7 @@ namespace DVModApi
         /// </summary>
         /// <param name="name">Name on the button</param>
         /// <param name="tooltip">Tooltip displayed when you hover over button</param>
-        /// <param name="onClick">Your action when button is clicked</param>
+        /// <param name="onClick">Function to execute when button is clicked</param>
         public static void AddButton(string name, string tooltip, Action onClick)
         {
             if (mod == null)
@@ -145,11 +147,11 @@ namespace DVModApi
         /// <summary>
         /// Add checkbox (toggle) to Settings
         /// </summary>
-        /// <param name="id">Unique id for this setting</param>
+        /// <param name="id">Unique id for this checkbox</param>
         /// <param name="name">Name visible on checkbox</param>
         /// <param name="tooltip">Tooltip displayed when you hover over checkbox</param>
         /// <param name="value">Default value</param>
-        /// <param name="onValueChanged">optional action when value is changed</param>
+        /// <param name="onValueChanged">Function to execute when value is changed (optional)</param>
         /// <returns>ModSettingsCheckBox variable</returns>
         public static ModSettingsCheckBox AddCheckBox(string id, string name, string tooltip, bool value = false, Action onValueChanged = null)
         {
@@ -162,7 +164,18 @@ namespace DVModApi
             mod.modSettings.Add(c);
             return c;
         }
-
+        /// <summary>
+        /// Add slider to settings that uses float values
+        /// </summary>
+        /// <param name="id">Unique id for this slider</param>
+        /// <param name="name">Name visible on slider</param>
+        /// <param name="tooltip">Tooltip displayed when you hover over slider</param>
+        /// <param name="minValue">Min allowed value for slider</param>
+        /// <param name="maxValue">Max allowed value for slider</param>
+        /// <param name="value">Default value for slider</param>
+        /// <param name="decimalPoints">Round to number of decimal points (default 2)</param>
+        /// <param name="onValueChanged">Function to execute if value is changed (optional)</param>
+        /// <returns>ModSettingsSlider</returns>
         public static ModSettingsSlider AddSlider(string id, string name, string tooltip, float minValue, float maxValue, float value = 0f, int decimalPoints = 2, Action onValueChanged = null)
         {
             if (mod == null)
@@ -179,6 +192,17 @@ namespace DVModApi
             mod.modSettings.Add(s);
             return s;
         }
+        /// <summary>
+        /// Add slider to settings that uses integer values
+        /// </summary>
+        /// <param name="id">Unique id for this slider</param>
+        /// <param name="name">Name visible on slider</param>
+        /// <param name="tooltip">Tooltip displayed when you hover over slider</param>
+        /// <param name="minValue">Min allowed value for slider</param>
+        /// <param name="maxValue">Max allowed value for slider</param>
+        /// <param name="value">Default value for slider</param>
+        /// <param name="onValueChanged">Function to execute if value is changed (optional)</param>
+        /// <returns>ModSettingsSliderInt</returns>
         public static ModSettingsSliderInt AddSlider(string id, string name, string tooltip, int minValue, int maxValue, int value = 0, Action onValueChanged = null)
         {
             if (mod == null)
@@ -190,6 +214,16 @@ namespace DVModApi
             mod.modSettings.Add(s);
             return s;
         }
+        /// <summary>
+        /// Add slider to settings that uses integer values (displays text from array based on value)
+        /// </summary>
+        /// <param name="id">Unique id for this slider</param>
+        /// <param name="name">Name visible on slider</param>
+        /// <param name="tooltip">Tooltip displayed when you hover over slider</param>
+        /// <param name="textValues">Array of text values</param>
+        /// <param name="value">Default value for slider (within array bounds)</param>
+        /// <param name="onValueChanged">Function to execute if value is changed (optional)</param>
+        /// <returns>ModSettingsSliderInt</returns>
         public static ModSettingsSliderInt AddSlider(string id, string name, string tooltip, string[] textValues, int value = 0, Action onValueChanged = null)
         {
             if (mod == null)
@@ -215,6 +249,9 @@ namespace DVModApi
         }
     }
 
+    /// <summary>
+    /// Mod Settings base class
+    /// </summary>
     public class ModSettings
     {
         internal string ID;
@@ -232,6 +269,9 @@ namespace DVModApi
             Type = type;
         }
     }
+    /// <summary>
+    /// Variable to get/set values from checkbox (toggle button)
+    /// </summary>
     public class ModSettingsCheckBox : ModSettings
     {
         internal bool Value = false;
@@ -259,6 +299,9 @@ namespace DVModApi
             Value = value;
         }
     }
+    /// <summary>
+    /// Variable to get/set values from slider
+    /// </summary>
     public class ModSettingsSlider : ModSettings
     {
         internal float Value = 0f;
@@ -299,7 +342,9 @@ namespace DVModApi
                 Value = value;
         }
     }
-
+    /// <summary>
+    /// Variable to get/set values from slider (integer/text version)
+    /// </summary>
     public class ModSettingsSliderInt : ModSettings
     {
         internal int Value = 0;

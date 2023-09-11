@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace DVModApi
 {
+    /// <summary>
+    /// Type of function you want to setup (for entry point)
+    /// </summary>
     public enum FunctionType
     {
         /// <summary>
@@ -24,11 +27,7 @@ namespace DVModApi
         /// <summary>
         /// ModSettings - ModAPI Settings should be created here. (Created settings are visible only in "Better Mod UI", this is NOT for UMM settings)
         /// </summary>
-        ModSettings,
-        /// <summary>
-        /// ModSettingsLoaded - Called after saved settings data have been loaded from file. (ModAPI Settings, this is NOT for UMM settings)
-        /// </summary>
-        ModSettingsLoaded
+        ModSettings
     }
 
     internal class DVModEntry
@@ -39,7 +38,6 @@ namespace DVModApi
         internal Action A_OnGameLoad;           //When Game is loaded
         internal Action A_OnSave;               //When Game is saved
         internal Action A_ModSettings;          //Settings Creation  
-        internal Action A_ModSettingsLoaded;    //When mod settings have been loaded from file
 
         internal bool hasModSettings = false;
         internal List<ModSettings> modSettings; //List of custom Mod Settings
@@ -91,19 +89,15 @@ namespace DVModApi
                     else
                         LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>ModSettings</color> function type.");
                     break;
-                case FunctionType.ModSettingsLoaded:
-                    if (A_ModSettingsLoaded == null)
-                        A_ModSettingsLoaded = function;
-                    else
-                        LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. You already created <color=#00ffffff>ModSettingsLoaded</color> function type.");
-                    break;
                 default:
                         LogHelper.LogError($"Setup() error for <color=#00ffffff>{modEntry.Info.Id}</color>. There is no such function (are you on outdated version of API? Also don't bitwise it)");
                     break;
             }
         }
     }
-
+    /// <summary>
+    /// DVModAPI Main Class
+    /// </summary>
     public class DVModAPI
     {
         internal static List<DVModEntry> DVModEntries = new List<DVModEntry>();
@@ -125,6 +119,13 @@ namespace DVModApi
             }
             me.SetupFunction(functionType, function);
         }
+
+        /// <summary>
+        /// Setup functions controlled by DVModAPI
+        /// </summary>
+        /// <param name="modEntry">your UMM modEntry</param>
+        /// <param name="functionType">functionType to Setup</param>
+        /// <param name="function">Actual function to execute</param>
         public static void Setup(UnityModManager.ModEntry modEntry, FunctionType functionType, Action<bool> function)
         {
             DVModEntry me = DVModEntries.Where(x => x.modEntry == modEntry).FirstOrDefault();

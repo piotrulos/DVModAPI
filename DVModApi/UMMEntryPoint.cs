@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace DVModApi
 {
-    public static class UMMEntryPoint
+    internal static class UMMEntryPoint
     {
         internal static UnityModManager.ModEntry apimod;
         static bool rtmm = false;
