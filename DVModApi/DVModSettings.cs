@@ -1,9 +1,28 @@
-﻿using DV.Booklets;
-using System;
-using System.Reflection.Emit;
+﻿using System;
+using System.Collections.Generic;
+using static UnityModManagerNet.UnityModManager.ModEntry;
+using System.IO;
+using Newtonsoft.Json;
+using System.Linq;
+using System.Net.Security;
 
 namespace DVModApi
 {
+    public class SettingsList
+    {
+        public List<Setting> settings = new List<Setting>();
+    }
+    public class Setting
+    {
+        public string ID;
+        public object Value;
+
+        public Setting(string id, object value)
+        {
+            ID = id;
+            Value = value;
+        }
+    }
     internal enum SettingsType
     {
         CheckBox,
@@ -21,7 +40,74 @@ namespace DVModApi
             mod = dVModEntry;
             mod.ModSettingsSetup();
         }
+        internal static void SaveSettings(DVModEntry mod)
+        {
+            if (!mod.hasModSettings) return;
 
+            SettingsList list = new SettingsList();
+            if (!Directory.Exists(Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings")))
+                Directory.CreateDirectory(Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings"));
+            string path = Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings", $"{mod.modEntry.Info.Id}.json");
+            
+            for (int i = 0; i < mod.modSettings.Count; i++)
+            {
+                switch (mod.modSettings[i].Type)
+                {
+                    case SettingsType.CheckBox:
+                        ModSettingsCheckBox scb = (ModSettingsCheckBox)mod.modSettings[i];
+                        list.settings.Add(new Setting(scb.ID, scb.Value));
+                        break;
+                    case SettingsType.Slider:
+                        ModSettingsSlider ss = (ModSettingsSlider)mod.modSettings[i];
+                        list.settings.Add(new Setting(ss.ID, ss.Value));
+                        break;
+                    case SettingsType.SliderInt:
+                        ModSettingsSliderInt ssi = (ModSettingsSliderInt)mod.modSettings[i];
+                        list.settings.Add(new Setting(ssi.ID, ssi.Value));
+                        break;
+                    case SettingsType.Text:
+                    case SettingsType.Button:
+                    case SettingsType.Selector:
+                        continue;
+                }
+            }
+            string serializedData = JsonConvert.SerializeObject(list, Formatting.Indented);
+            File.WriteAllText(path, serializedData);
+        }
+
+        internal static void LoadSettings(DVModEntry mod)
+        {
+            if (!mod.hasModSettings) return;
+            string path = Path.Combine(UMMEntryPoint.apimod.Path, "ModSettings", $"{mod.modEntry.Info.Id}.json");
+            if (!File.Exists(path)) return;
+            SettingsList s = JsonConvert.DeserializeObject<SettingsList>(File.ReadAllText(path));
+            for (int i = 0; i < s.settings.Count; i++)
+            {
+                ModSettings ms = mod.modSettings.Where(x => x.ID == s.settings[i].ID).FirstOrDefault();
+                if (ms != null)
+                {
+                    switch (ms.Type)
+                    {
+                        case SettingsType.CheckBox:
+                            ModSettingsCheckBox scb = (ModSettingsCheckBox)ms;
+                            scb.SetValue(bool.Parse(s.settings[i].Value.ToString()));
+                            break;
+                        case SettingsType.Slider:
+                            ModSettingsSlider ss = (ModSettingsSlider)ms;
+                            ss.SetValue(float.Parse(s.settings[i].Value.ToString()));
+                            break;
+                        case SettingsType.SliderInt:
+                            ModSettingsSliderInt ssi = (ModSettingsSliderInt)ms;
+                            ssi.SetValue(int.Parse(s.settings[i].Value.ToString()));
+                            break;
+                        case SettingsType.Text:
+                        case SettingsType.Button:
+                        case SettingsType.Selector:
+                            continue;
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Add just static text in Settings
         /// </summary>

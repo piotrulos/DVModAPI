@@ -7,9 +7,11 @@ namespace DVModApi
 {
     public static class UMMEntryPoint
     {
+        internal static UnityModManager.ModEntry apimod;
         static bool rtmm = false;
         static bool Load(UnityModManager.ModEntry modEntry)
         {
+            apimod = modEntry;
             LogHelper.Log("<color=#00ffffff>Initializing...</color>");
             DVModAPI.Init();
             if (DVModAPI.DVModAPIGO == null)
@@ -93,6 +95,7 @@ namespace DVModApi
                         {
                             DVModSettings.Settings(DVModAPI.DVModEntries[i]);
                             DVModAPI.DVModEntries[i].A_ModSettings.Invoke();
+                            DVModSettings.LoadSettings(DVModAPI.DVModEntries[i]);
                         }
                         catch (Exception e)
                         {

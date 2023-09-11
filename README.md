@@ -1,3 +1,7 @@
+[![](https://img.shields.io/github/release/piotrulos/DVModAPI.svg?style=flat-square)](#) 
+[![](https://img.shields.io/github/downloads/piotrulos/DVModAPI/total.svg?style=flat-square)](#) 
+[![](https://img.shields.io/github/license/piotrulos/DVModAPI.svg?style=flat-square)](#) 
+
 # Derail Valley Mod API
 This is modding API for **Derail Valley**.    
 To use this you install zip package from Releases as any other UMM mod     
