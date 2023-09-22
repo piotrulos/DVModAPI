@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System;
+﻿using System;
 using UnityEngine;
 using UnityModManagerNet;
 using System.Collections.Generic;

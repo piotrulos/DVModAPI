@@ -54,7 +54,7 @@ namespace DVModApi
         private static void WorldStreamingInit_LoadingFinished()
         {
             LogHelper.Log("Game has been loaded");
-
+            DVModUI.GetPopupReferences(GameObject.Find("[MAIN]").transform.Find("[GameUI]/[NewCanvasController]/Auxiliary Canvas, EventSystem, Input Module").GetComponent<PopupNotificationReferences>());
             for (int i = 0; i < DVModAPI.DVModEntries.Count; i++)
             {
                 //Call OnGameLoad for registered mods.
@@ -81,6 +81,7 @@ namespace DVModApi
                 if (DVModAPI.MainFont == null)
                     DVModAPI.MainFont = Resources.FindObjectsOfTypeAll<TMP_FontAsset>().Where(x => x.name.Contains("__MAIN__")).FirstOrDefault();
          
+                DVModUI.GetPopupReferences(GameObject.Find("MenuOpeningScene").GetComponent<PopupNotificationReferences>());
                 if (DVModAPI.DVModAPIGO == null)
                 {
                     DVModAPI.DVModAPIGO = new GameObject("DVModAPI");
