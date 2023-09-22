@@ -2,6 +2,9 @@
 using UnityEngine;
 using UnityModManagerNet;
 using UnityEngine.SceneManagement;
+using DV.UI;
+using System.Linq;
+using TMPro;
 
 namespace DVModApi
 {
@@ -75,6 +78,9 @@ namespace DVModApi
             if (scene.name == "MainMenu_LFS")
             {
                 LogHelper.Log("Main Menu has been fully loaded");
+                if (DVModAPI.MainFont == null)
+                    DVModAPI.MainFont = Resources.FindObjectsOfTypeAll<TMP_FontAsset>().Where(x => x.name.Contains("__MAIN__")).FirstOrDefault();
+         
                 if (DVModAPI.DVModAPIGO == null)
                 {
                     DVModAPI.DVModAPIGO = new GameObject("DVModAPI");

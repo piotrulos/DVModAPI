@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -9,12 +10,17 @@ namespace DVModApi
     /// Class for Helpful Asset loading functions
     /// </summary>
     public class DVModAssets
-    {
+    {        
+        /// <summary>
+        /// Get main TMP_FontAsset that is used in UI.
+        /// </summary>
+        public static TMP_FontAsset MainUIFont => DVModAPI.MainFont;
+
         /// <summary>
         /// Load Asset bundle from yours mod folder
         /// </summary>
         /// <param name="modEntry">Your mod entry</param>
-        /// <param name="bundleFileName">Bundle file name to load from yours mod folder</param>
+        /// <param name="bundleFileName">AssetBundle file name to load from yours mod folder</param>
         /// <returns>AssetBundle</returns>
         /// <exception cref="FileNotFoundException"></exception>
         public static AssetBundle LoadAssetBundle(UnityModManager.ModEntry modEntry, string bundleFileName)

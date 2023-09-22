@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityModManagerNet;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 
 namespace DVModApi
 {
@@ -102,6 +103,12 @@ namespace DVModApi
     {
         internal static List<DVModEntry> DVModEntries = new List<DVModEntry>();
         internal static GameObject DVModAPIGO;
+        internal static TMP_FontAsset MainFont;
+       
+        /// <summary>
+        /// Check if DV is running in VR Mode
+        /// </summary>
+        public static bool VRMode => VRManager.IsVREnabled();
 
         /// <summary>
         /// Setup functions controlled by DVModAPI
